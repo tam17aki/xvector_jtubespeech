@@ -4,14 +4,17 @@ import torch.nn as nn
 from .tdnn import TDNN
 # from xvector_jtubespeech.network.tdnn import TDNN
 
-def XVector(model_path="./xvector.pth"):
+def XVector(model_path="./xvector.pth", use_cpu=False):
     model_not_exist_msg = (
         f"[error] dumped file of model's state dict does not exist at {model_path}"
     )
     assert Path(model_path).exists(), model_not_exist_msg
 
     model = _XVector(24, 1233)
-    model.load_state_dict(torch.load(model_path))
+    if use_cpu is True:
+        model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
+    else:
+        model.load_state_dict(torch.load(model_path))
     model.eval()
 
     for param in model.parameters():
